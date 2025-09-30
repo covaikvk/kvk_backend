@@ -8,7 +8,7 @@ const menuController = require("./menuController");
 
 
 // Get menu list items by menuname_id
-router.get("/menulist/menu/:menuname_id", menuController.getMenuListByMenuId);
+router.get("/menulist_by_menuid/:menuname_id", menuController.getMenuListByMenuId);
 
 //////////////////////////
 // MENUNAME ROUTES
