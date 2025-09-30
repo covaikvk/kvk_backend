@@ -23,8 +23,7 @@ const connectDB = async () => {
     await connection.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}`);
     await connection.query(`USE ${process.env.DB_NAME}`);
 
-
-    // Create todayspecial table with veg/non-veg
+    // Create todayspecial table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS todayspecial (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -36,6 +35,44 @@ const connectDB = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Create menuname table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS menuname (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(50) NOT NULL,
+        image_url TEXT,
+        banner_url TEXT
+      )
+    `);
+
+
+
+
+
+
+    // Create menulist table
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS menulist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    menuname_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    image_url VARCHAR(500),
+    type ENUM('veg','non-veg') NOT NULL DEFAULT 'veg',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_menuname FOREIGN KEY (menuname_id) REFERENCES menuname(id) ON DELETE CASCADE ON UPDATE CASCADE
+  )
+`);
+
+
+const [rows, fields] = await connection.query('SELECT * FROM menulist');
+console.log("📋 Total number:", rows.length);
+console.log("📋 Columns:");
+fields.forEach(field => {
+  console.log('-', field.name);
+ });
 
     console.log("✅ Tables created successfully (if not exist).");
 
