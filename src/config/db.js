@@ -1,20 +1,16 @@
-// db.js
 const mysql = require("mysql2/promise");
 const fs = require("fs");
 require("dotenv").config();
 
 const connectDB = async () => {
   try {
-    // Connect without specifying database first
     const connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
-      ssl: {
-        ca: fs.readFileSync(process.env.DB_SSL_CA),
-      },
-      multipleStatements: true, // allows running multiple queries
+      multipleStatements: true,
+      ssl: process.env.DB_SSL_CA ? { ca: fs.readFileSync(process.env.DB_SSL_CA) } : undefined,
     });
 
     console.log("✅ MySQL connected successfully!");
@@ -66,8 +62,19 @@ await connection.query(`
   )
 `);
 
+//user table
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  phonenumber VARCHAR(15) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL
+)
+`);
 
-const [rows, fields] = await connection.query('SELECT * FROM menulist');
+
+
+const [rows, fields] = await connection.query('SELECT * FROM users');
 console.log("📋 Total number:", rows.length);
 console.log("📋 Columns:");
 fields.forEach(field => {
@@ -76,9 +83,9 @@ fields.forEach(field => {
 
     console.log("✅ Tables created successfully (if not exist).");
 
-    return connection;
+    return connection; // Return connection
   } catch (error) {
-    console.error("❌ Error connecting to MySQL or creating tables:", error.message);
+    console.error("❌ Error connecting to MySQL:", error.message);
     process.exit(1);
   }
 };
