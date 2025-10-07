@@ -24,6 +24,9 @@ app.use("/api/upload", require("./src/tables/upload/upload"));
 app.use("/api/todayspecial", require("./src/tables/todayspecial/todayspecialRoutes"));
 app.use("/api/menu", require("./src/tables/menu/menuRoutes"));
 app.use("/api/auth", require("./src/tables/user/authRoutes"));
+app.use("/api/foods", require("./src/tables/Foods/foodsRoutes"));
+
+
 
 
 // Start server
