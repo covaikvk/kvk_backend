@@ -29,7 +29,7 @@ router.delete("/category/:id", deleteFoodCategory);
 // Food Items Routes
 // ===========================
 // ✅ Fetch items by category ID
-router.get("/item/category/:id", getFoodItemsByCategory);
+router.get("/item/category/:foodcategory_id", getFoodItemsByCategory);
 
 router.post("/item", addFoodItem);
 router.get("/item", getAllFoodItems);
