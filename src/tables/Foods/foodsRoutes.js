@@ -12,16 +12,25 @@ const {
   editFoodItem,
   deleteFoodItem,
   getCombinedFoodData,
+  getFoodItemsByCategoryId,
+  getFoodItemsByCategory, // ✅ new function for category-based items
 } = require("./foodsController");
 
-// Food category routes
+// ===========================
+// Food Category Routes
+// ===========================
 router.post("/category", addFoodCategory);
 router.get("/category", getAllFoodCategories);
 router.get("/category/:id", getFoodCategoryById);
 router.put("/category/:id", editFoodCategory);
 router.delete("/category/:id", deleteFoodCategory);
 
-// Food items routes
+// ===========================
+// Food Items Routes
+// ===========================
+// ✅ Fetch items by category ID
+router.get("/item/category/:id", getFoodItemsByCategory);
+
 router.post("/item", addFoodItem);
 router.get("/item", getAllFoodItems);
 router.get("/item/:id", getFoodItemById);
@@ -29,7 +38,9 @@ router.put("/item/:id", editFoodItem);
 router.delete("/item/:id", deleteFoodItem);
 
 
-// GET combined categories + items
+// ===========================
+// Combined GET (categories + items)
+// ===========================
 router.get("/combined", getCombinedFoodData);
 
 module.exports = router;

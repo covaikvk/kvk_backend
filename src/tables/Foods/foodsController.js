@@ -129,6 +129,25 @@ exports.getFoodItemById = async (req, res) => {
   }
 };
 
+exports.getFoodItemsByCategory = async (req, res) => {
+  const { foodcategory_id } = req.params;
+  try {
+    const db = await connectDB();
+    const [rows] = await db.query(
+      "SELECT * FROM foodsitems WHERE foodcategory_id = ?",
+      [foodcategory_id]
+    );
+
+    if (rows.length === 0)
+      return res.status(404).json({ message: "No food items found for this category" });
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.editFoodItem = async (req, res) => {
   const { id } = req.params;
   const { image_url, name, price, description, foodcategory_id, category } = req.body;
