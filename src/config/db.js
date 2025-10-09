@@ -71,6 +71,28 @@ const connectDB = async () => {
       )
     `);
 
+    // ✅ Create address table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS address (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(15) NOT NULL,
+        alternate_phone_number VARCHAR(15),
+        pincode VARCHAR(10) NOT NULL,
+        state VARCHAR(50) NOT NULL,
+        city VARCHAR(50) NOT NULL,
+        address_1 VARCHAR(255),
+        address_2 VARCHAR(255),
+        landmark VARCHAR(255),
+        type_of_address ENUM('Home','Work','Other') DEFAULT 'Home',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_user FOREIGN KEY (user_id)
+          REFERENCES users(id)
+          ON DELETE CASCADE ON UPDATE CASCADE
+      )
+    `);
+
     // ✅ Create foodcategory table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS foodcategory (
@@ -83,34 +105,32 @@ const connectDB = async () => {
       )
     `);
 
-
     // ✅ Create foodsitems table
-await connection.query(`
-  CREATE TABLE IF NOT EXISTS foodsitems (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    image_url VARCHAR(500),
-    name VARCHAR(255) NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    description TEXT,
-    foodcategory_id INT NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_foodcategory FOREIGN KEY (foodcategory_id)
-      REFERENCES foodcategory(id)
-      ON DELETE CASCADE ON UPDATE CASCADE
-  )
-`);
-
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS foodsitems (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        image_url VARCHAR(500),
+        name VARCHAR(255) NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        description TEXT,
+        foodcategory_id INT NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_foodcategory FOREIGN KEY (foodcategory_id)
+          REFERENCES foodcategory(id)
+          ON DELETE CASCADE ON UPDATE CASCADE
+      )
+    `);
 
     console.log("✅ Tables created successfully (if not exist).");
 
-    // Optional: Log users table info
-    const [rows, fields] = await connection.query("SELECT * FROM foodsitems");
-    console.log("📋 Total number of users:", rows.length);
+    // Optional: log address table details
+    const [rows, fields] = await connection.query("SELECT * FROM address");
+    console.log("📋 Total number of addresses:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
 
-    return connection; // Return connection
+    return connection;
   } catch (error) {
     console.error("❌ Error connecting to MySQL:", error.message);
     process.exit(1);
@@ -118,3 +138,9 @@ await connection.query(`
 };
 
 module.exports = connectDB;
+
+
+
+
+
+
