@@ -122,11 +122,35 @@ const connectDB = async () => {
       )
     `);
 
+    // ✅ Create orders table (updated with payment_status)
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    address_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    payment_method ENUM('Cash On Delivery', 'Online') NOT NULL,
+    payment_status ENUM('Pending', 'Paid', 'Failed') DEFAULT 'Pending',
+    instructions TEXT,
+    items JSON NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    order_status ENUM('Pending', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_order_user FOREIGN KEY (user_id)
+      REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_order_address FOREIGN KEY (address_id)
+      REFERENCES address(id) ON DELETE CASCADE ON UPDATE CASCADE
+  )
+`);
+
+
+
     console.log("✅ Tables created successfully (if not exist).");
 
     // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM address");
-    console.log("📋 Total number of addresses:", rows.length);
+    const [rows, fields] = await connection.query("SELECT * FROM orders");
+    console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
 

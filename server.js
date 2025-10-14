@@ -27,19 +27,11 @@ app.use("/api/todayspecial",require("./src/tables/todayspecial/todayspecialRoute
 app.use("/api/menu", require("./src/tables/menu/menuRoutes"));
 app.use("/api/auth", require("./src/tables/user/authRoutes"));
 app.use("/api/foods", require("./src/tables/Foods/foodsRoutes"));
+app.use("/api/orders", require("./src/tables/order/orderRoutes"));
+app.use("/api/quotations", require("./src/tables/quotations/quotationsRoutes"));
 
 
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
-
-
-
-
-
-
-
-
-
-
 
