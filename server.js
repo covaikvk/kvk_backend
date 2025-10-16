@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 app.use("/api/address", require("./src/tables/address/addressRoutes"));
 app.use("/api/upload", require("./src/tables/upload/upload"));
 app.use("/api/videos", require("./src/tables/videos/videoRoutes"));
+app.use("/api/regularmenu", require("./src/tables/regularmenu/regularMenuRoutes"));
 app.use("/api/todayspecial",require("./src/tables/todayspecial/todayspecialRoutes"));
 app.use("/api/menu", require("./src/tables/menu/menuRoutes"));
 app.use("/api/auth", require("./src/tables/user/authRoutes"));

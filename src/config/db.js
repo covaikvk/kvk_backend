@@ -156,11 +156,46 @@ await connection.query(`
 `);
 
 
+// ✅ Create regularmenu table
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS regularmenu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(255) NOT NULL,
+    type ENUM('veg', 'non-veg') NOT NULL DEFAULT 'veg',
+    food_category ENUM('breakfast', 'lunch', 'dinner') NOT NULL,
+    packagename VARCHAR(255) NOT NULL,
+    package_image_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+
+
+// ✅ Create regulartabellist table
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS regulartabellist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    regularmenu_id INT NOT NULL,
+    sunday JSON,
+    monday JSON,
+    tuesday JSON,
+    wednesday JSON,
+    thursday JSON,
+    friday JSON,
+    saturday JSON,
+    days_and_price JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_regularmenu FOREIGN KEY (regularmenu_id)
+      REFERENCES regularmenu(id)
+      ON DELETE CASCADE ON UPDATE CASCADE
+  )
+`);
+
 
     console.log("✅ Tables created successfully (if not exist).");
 
     // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM videos");
+    const [rows, fields] = await connection.query("SELECT * FROM regulartabellist");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
