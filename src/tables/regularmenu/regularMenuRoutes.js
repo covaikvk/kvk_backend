@@ -13,10 +13,14 @@ const {
   updateRegularTableList,
   deleteRegularTableList,
   getRegularMenuswithlist,
+  getRegularTableListByMenuId,
 } = require("./regularMenuController");
 
 /*---------------menu with list-------------- */
 router.get("/menuwithlist", getRegularMenuswithlist);
+
+// ✅ Get Table 2 by menu ID
+router.get("/tabel_listid/:id", getRegularTableListByMenuId);
 
 /* ---------------------- regularmenu ---------------------- */
 router.get("/", getRegularMenus);
@@ -29,5 +33,9 @@ router.get("/tablelist", getRegularTableList);
 router.post("/tablelist", createRegularTableList);
 router.put("/tablelist/:id", updateRegularTableList);
 router.delete("/tablelist/:id", deleteRegularTableList);
+
+
+
+
 
 module.exports = router;

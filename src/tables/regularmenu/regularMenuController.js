@@ -60,6 +60,7 @@ exports.deleteRegularMenu = async (req, res) => {
   }
 };
 
+
 /* ---------------------- REGULAR TABLE LIST ---------------------- */
 
 // ✅ Get all regulartabellist entries
@@ -150,7 +151,7 @@ exports.deleteRegularTableList = async (req, res) => {
   }
 };
 
-/* ---------------------- COMBINED MENUS ---------------------- */
+
 
 exports.getRegularMenuswithlist = async (req, res) => {
   try {
@@ -179,25 +180,27 @@ exports.getRegularMenuswithlist = async (req, res) => {
       ORDER BY rm.id DESC, rtbl.id ASC
     `);
 
+    // Optionally, parse JSON fields for tablelist
     const result = rows.map(row => ({
-      menu_id: row.menu_id,
-      category: row.category,
-      type: row.type,
-      food_category: row.food_category,
-      packagename: row.packagename,
-      package_image_url: row.package_image_url,
-      tablelist: {
-        tablelist_id: row.tablelist_id,
-        sunday: parseJSON(row.sunday),
-        monday: parseJSON(row.monday),
-        tuesday: parseJSON(row.tuesday),
-        wednesday: parseJSON(row.wednesday),
-        thursday: parseJSON(row.thursday),
-        friday: parseJSON(row.friday),
-        saturday: parseJSON(row.saturday),
-        days_and_price: parseJSON(row.days_and_price)
-      }
-    }));
+  menu_id: row.menu_id,
+  category: row.category,
+  type: row.type,
+  food_category: row.food_category,
+  packagename: row.packagename,
+  package_image_url: row.package_image_url,
+  tablelist: {
+    tablelist_id: row.tablelist_id,
+    sunday: parseJSON(row.sunday),
+    monday: parseJSON(row.monday),
+    tuesday: parseJSON(row.tuesday),
+    wednesday: parseJSON(row.wednesday),
+    thursday: parseJSON(row.thursday),
+    friday: parseJSON(row.friday),
+    saturday: parseJSON(row.saturday),
+    days_and_price: parseJSON(row.days_and_price)
+  }
+}));
+
 
     res.json(result);
   } catch (error) {
@@ -205,8 +208,24 @@ exports.getRegularMenuswithlist = async (req, res) => {
   }
 };
 
-/* ---------------------- GET TABLE 2 BY MENU ID ---------------------- */
 
+
+
+const parseJSON = (value) => {
+  if (!value) return {};
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      return {};
+    }
+  }
+  return value; // already object
+};
+
+
+
+// GET Table 2 data by menu ID
 exports.getRegularTableListByMenuId = async (req, res) => {
   const { id } = req.params; // menu id
   try {
@@ -219,9 +238,10 @@ exports.getRegularTableListByMenuId = async (req, res) => {
       [id]
     );
 
-    if (rows.length === 0) 
+    if (rows.length === 0)
       return res.status(404).json({ message: "No table data found for this menu ID" });
 
+    // Parse JSON fields
     const result = rows.map(row => ({
       tablelist_id: row.id,
       sunday: parseJSON(row.sunday),
@@ -239,18 +259,4 @@ exports.getRegularTableListByMenuId = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error fetching table 2 data", error: error.message });
   }
-};
-
-/* ---------------------- HELPER ---------------------- */
-
-const parseJSON = (value) => {
-  if (!value) return {};
-  if (typeof value === "string") {
-    try {
-      return JSON.parse(value);
-    } catch (e) {
-      return {};
-    }
-  }
-  return value; // already object
 };
