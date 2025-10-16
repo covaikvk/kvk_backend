@@ -145,11 +145,22 @@ await connection.query(`
 `);
 
 
+// ✅ Create videos table
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS videos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    video_url VARCHAR(500) NOT NULL,
+    orderno INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+
 
     console.log("✅ Tables created successfully (if not exist).");
 
     // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM orders");
+    const [rows, fields] = await connection.query("SELECT * FROM videos");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
