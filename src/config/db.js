@@ -192,10 +192,28 @@ await connection.query(`
 `);
 
 
+
+// ✅ Create favorites table (without item_id)
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS favorites (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    image_url VARCHAR(500),
+    price DECIMAL(10,2) NOT NULL,
+    type ENUM('veg','non-veg') NOT NULL DEFAULT 'veg',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_fav_user FOREIGN KEY (user_id)
+      REFERENCES users(id)
+      ON DELETE CASCADE ON UPDATE CASCADE
+  )
+`);
+
+
     console.log("✅ Tables created successfully (if not exist).");
 
     // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM regulartabellist");
+    const [rows, fields] = await connection.query("SELECT * FROM favorites");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
@@ -208,9 +226,3 @@ await connection.query(`
 };
 
 module.exports = connectDB;
-
-
-
-
-
-
