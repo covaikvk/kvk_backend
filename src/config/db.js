@@ -210,10 +210,39 @@ await connection.query(`
 `);
 
 
+// ✅ Create customize_menu table
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS customize_menu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sunday JSON,
+    monday JSON,
+    tuesday JSON,
+    wednesday JSON,
+    thursday JSON,
+    friday JSON,
+    saturday JSON,
+    name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    whatsapp_number VARCHAR(15),
+    address_1 VARCHAR(255),
+    address_2 VARCHAR(255),
+    pincode VARCHAR(10),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    landmark VARCHAR(255),
+    number_of_persons INT,
+    total DECIMAL(10,2),
+    gst DECIMAL(10,2),
+    grand_total DECIMAL(10,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+
     console.log("✅ Tables created successfully (if not exist).");
 
     // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM favorites");
+    const [rows, fields] = await connection.query("SELECT * FROM customize_menu");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));

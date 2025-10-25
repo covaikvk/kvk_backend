@@ -24,6 +24,7 @@ app.use("/api/address", require("./src/tables/address/addressRoutes"));
 app.use("/api/upload", require("./src/tables/upload/upload"));
 app.use("/api/videos", require("./src/tables/videos/videoRoutes"));
 app.use("/api/regularmenu", require("./src/tables/regularmenu/regularMenuRoutes"));
+app.use("/api/customizemenu", require("./src/tables/CustomizeMenu/customizeMenuRoutes"));
 app.use("/api/todayspecial",require("./src/tables/todayspecial/todayspecialRoutes"));
 app.use("/api/favourites", require("./src/tables/Favourites/favouritesRoutes"));
 app.use("/api/menu", require("./src/tables/menu/menuRoutes"));
