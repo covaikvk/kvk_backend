@@ -11,7 +11,7 @@ const {
 
 // CRUD Routes
 router.post("/", verifyToken, addMenuItem);          // Create
-router.get("/", verifyToken, getMenuItems);         // Read all
+router.get("/",  getMenuItems);         // Read all
 router.get("/:id", verifyToken, async (req, res) => { // Read one
   try {
     const connection = await require("../../config/db")();
