@@ -53,15 +53,14 @@ const addMenuItem = async (req, res) => {
   }
 };
 
-// Get all menus for user
+// Get all customize menus (public)
 const getMenuItems = async (req, res) => {
   try {
     const connection = await connectDB();
-    const user_id = req.user.id;
 
+    // 🔓 Fetch all records (no user token needed)
     const [rows] = await connection.query(
-      "SELECT * FROM customize_menu WHERE user_id = ? ORDER BY created_at DESC",
-      [user_id]
+      "SELECT * FROM customize_menu ORDER BY created_at DESC"
     );
 
     res.json(rows);
