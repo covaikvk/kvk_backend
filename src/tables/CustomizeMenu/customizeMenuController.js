@@ -3,16 +3,36 @@ const connectDB = require("../../config/db");
 // Add Customize Menu
 const addMenuItem = async (req, res) => {
   try {
+
     const connection = await connectDB();
+    const user_id = req.user?.id || 18; // for testing without token
 
     const {
-      sunday,
-      monday,
-      tuesday,
-      wednesday,
-      thursday,
-      friday,
-      saturday,
+      sunday, monday, tuesday, wednesday, thursday, friday, saturday,
+      name, phone_number, whatsapp_number, address_1, address_2,
+      pincode, city, state, landmark, number_of_persons, total, gst, grand_total
+    } = req.body;
+
+    if (!name) return res.status(400).json({ msg: "Name is required" });
+
+    const query = `
+      INSERT INTO customize_menu (
+        user_id, sunday, monday, tuesday, wednesday, thursday, friday, saturday,
+        name, phone_number, whatsapp_number, address_1, address_2, pincode, city,
+        state, landmark, number_of_persons, total, gst, grand_total
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+      user_id,
+      JSON.stringify(sunday || {}),
+      JSON.stringify(monday || {}),
+      JSON.stringify(tuesday || {}),
+      JSON.stringify(wednesday || {}),
+      JSON.stringify(thursday || {}),
+      JSON.stringify(friday || {}),
+      JSON.stringify(saturday || {}),
       name,
       phone_number,
       whatsapp_number,
@@ -25,33 +45,17 @@ const addMenuItem = async (req, res) => {
       number_of_persons,
       total,
       gst,
-      grand_total,
-    } = req.body;
-
-    const user_id = req.user.id; // From JWT middleware
-
-    const query = `
-      INSERT INTO customize_menu (
-        user_id, sunday, monday, tuesday, wednesday, thursday, friday, saturday,
-        name, phone_number, whatsapp_number, address_1, address_2, pincode, city,
-        state, landmark, number_of_persons, total, gst, grand_total
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const values = [
-      user_id, sunday, monday, tuesday, wednesday, thursday, friday, saturday,
-      name, phone_number, whatsapp_number, address_1, address_2, pincode, city,
-      state, landmark, number_of_persons, total, gst, grand_total
+      grand_total
     ];
 
     const [result] = await connection.query(query, values);
-
     res.status(201).json({ msg: "Customize menu added", id: result.insertId });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: "Server error" });
+    console.error("❌ Error adding menu:", error);
+    res.status(500).json({ msg: "Server error", error: error.message });
   }
 };
+
 
 // Get all customize menus (public)
 const getMenuItems = async (req, res) => {

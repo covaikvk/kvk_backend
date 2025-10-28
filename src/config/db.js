@@ -241,11 +241,11 @@ await connection.query(`
 
     console.log("✅ Tables created successfully (if not exist).");
 
-    // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM customize_menu");
-    console.log("📋 Total number:", rows.length);
-    console.log("📋 Columns:");
-    fields.forEach((field) => console.log("-", field.name));
+    // // Optional: log address table details
+    // const [rows, fields] = await connection.query("SELECT * FROM customize_menu");
+    // console.log("📋 Total number:", rows.length);
+    // console.log("📋 Columns:");
+    // fields.forEach((field) => console.log("-", field.name));
 
     return connection;
   } catch (error) {

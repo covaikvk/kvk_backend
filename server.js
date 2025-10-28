@@ -14,6 +14,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
+
 // Routes
 app.get("/", (req, res) => {
   res.send("🚀 API running with MySQL connection");
