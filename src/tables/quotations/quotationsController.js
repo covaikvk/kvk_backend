@@ -1,17 +1,44 @@
 const connectDB = require('../../config/db');
 
-// Add a new quotation
+// 🟩 Add a new quotation
 const addQuotation = async (req, res) => {
-  const { name, phone, whatsappNumber, address1, address2, pincode, city, state, landmark, numberOfPerson, list } = req.body;
+  const {
+    name,
+    phone,
+    whatsappNumber,
+    address1,
+    address2,
+    pincode,
+    city,
+    state,
+    landmark,
+    numberOfPerson,
+    list,
+    date_of_function, // ✅ new field
+  } = req.body;
 
   try {
     const connection = await connectDB();
+
     const [result] = await connection.query(`
-      INSERT INTO quotations (name, phone, whatsappNumber, address1, address2, pincode, city, state, landmark, numberOfPerson, list)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
-      [name, phone, whatsappNumber, address1, address2, pincode, city, state, landmark, numberOfPerson, JSON.stringify(list)]
-    );
-    
+      INSERT INTO quotations 
+      (name, phone, whatsappNumber, address1, address2, pincode, city, state, landmark, numberOfPerson, list, date_of_function)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      name,
+      phone,
+      whatsappNumber,
+      address1,
+      address2,
+      pincode,
+      city,
+      state,
+      landmark,
+      numberOfPerson,
+      JSON.stringify(list),
+      date_of_function // ✅ insert new field
+    ]);
+
     res.status(201).json({ message: 'Quotation created successfully', id: result.insertId });
   } catch (error) {
     console.error("❌ Error creating quotation:", error.message);
@@ -19,11 +46,11 @@ const addQuotation = async (req, res) => {
   }
 };
 
-// Get all quotations
+// 🟨 Get all quotations
 const getAllQuotations = async (req, res) => {
   try {
     const connection = await connectDB();
-    const [quotations] = await connection.query("SELECT * FROM quotations");
+    const [quotations] = await connection.query("SELECT * FROM quotations ORDER BY id DESC");
     res.status(200).json(quotations);
   } catch (error) {
     console.error("❌ Error fetching quotations:", error.message);
@@ -31,7 +58,7 @@ const getAllQuotations = async (req, res) => {
   }
 };
 
-// Get a single quotation by id
+// 🟦 Get a single quotation by ID
 const getQuotationById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -49,18 +76,46 @@ const getQuotationById = async (req, res) => {
   }
 };
 
-// Update a quotation
+// 🟩 Update a quotation
 const updateQuotation = async (req, res) => {
   const { id } = req.params;
-  const { name, phone, whatsappNumber, address1, address2, pincode, city, state, landmark, numberOfPerson, list } = req.body;
+  const {
+    name,
+    phone,
+    whatsappNumber,
+    address1,
+    address2,
+    pincode,
+    city,
+    state,
+    landmark,
+    numberOfPerson,
+    list,
+    date_of_function, // ✅ added here too
+  } = req.body;
 
   try {
     const connection = await connectDB();
     const [result] = await connection.query(`
-      UPDATE quotations SET name = ?, phone = ?, whatsappNumber = ?, address1 = ?, address2 = ?, pincode = ?, city = ?, state = ?, landmark = ?, numberOfPerson = ?, list = ?
-      WHERE id = ?`, 
-      [name, phone, whatsappNumber, address1, address2, pincode, city, state, landmark, numberOfPerson, JSON.stringify(list), id]
-    );
+      UPDATE quotations
+      SET name = ?, phone = ?, whatsappNumber = ?, address1 = ?, address2 = ?, 
+          pincode = ?, city = ?, state = ?, landmark = ?, numberOfPerson = ?, list = ?, date_of_function = ?
+      WHERE id = ?
+    `, [
+      name,
+      phone,
+      whatsappNumber,
+      address1,
+      address2,
+      pincode,
+      city,
+      state,
+      landmark,
+      numberOfPerson,
+      JSON.stringify(list),
+      date_of_function, // ✅ update value
+      id
+    ]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Quotation not found' });
@@ -73,7 +128,7 @@ const updateQuotation = async (req, res) => {
   }
 };
 
-// Delete a quotation
+// 🟥 Delete a quotation
 const deleteQuotation = async (req, res) => {
   const { id } = req.params;
 
