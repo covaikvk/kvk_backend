@@ -3,7 +3,7 @@ const router = express.Router();
 const quotationsController = require('./quotationsController');
 
 // Add a new quotation
-router.post('/add', quotationsController.addQuotation);
+router.post('/', quotationsController.addQuotation);
 
 // Get all quotations
 router.get('/', quotationsController.getAllQuotations);
