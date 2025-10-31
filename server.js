@@ -4,6 +4,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const connectDB = require("./src/config/db");
 
+
 dotenv.config();
 const app = express();
 
@@ -19,6 +20,26 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("🚀 API running with MySQL connection");
 });
+app.get("/test", (req, res) => {
+  res.send("🚀 Test endpoint working!");
+});
+
+// Import notification helper
+const sendPushNotification = require("./src/utils/sendPush");
+
+// Test Notification Route
+app.get("/notification", async (req, res) => {
+  const testToken = "ExponentPushToken[ciLDMZICJMSaIyn6jw_Vlf]"; 
+
+  await sendPushNotification(
+    testToken,
+    "Hello 👋",
+    "This is your first server push notification!"
+  );
+
+  res.json({ success: true, message: "Notification sent!" });
+});
+
 
 // app.use("/api/address", require("./src/tables/address/addressRoutes"));
 app.use("/api/address", require("./src/tables/address/addressRoutes"));

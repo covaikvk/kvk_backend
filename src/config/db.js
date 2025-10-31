@@ -158,6 +158,7 @@ await connection.query(`
     payment_status ENUM('Pending', 'Paid', 'Failed') DEFAULT 'Pending',
     instructions TEXT,
     items JSON NOT NULL,
+    expoToken VARCHAR(255),
     total_amount DECIMAL(10,2) NOT NULL,
     order_status ENUM('Pending', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -266,7 +267,7 @@ await connection.query(`
     console.log("✅ Tables created successfully (if not exist).");
 
     // // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM quotations");
+    const [rows, fields] = await connection.query("SELECT * FROM orders");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
