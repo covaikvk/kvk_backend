@@ -264,10 +264,36 @@ await connection.query(`
 `);
 
 
+
+// ✅ Create regularmenuorder table (with confirmed status)
+await connection.query(`
+  CREATE TABLE IF NOT EXISTS regularmenuorder (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    alternate_phone_number VARCHAR(15),
+    pincode VARCHAR(10) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    address_1 VARCHAR(255) NOT NULL,
+    address_2 VARCHAR(255),
+    landmark VARCHAR(255),
+    type_of_address ENUM('Home', 'Work', 'Other') DEFAULT 'Home',
+    regularmenuname VARCHAR(255),
+    payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
+    order_status ENUM('pending', 'confirmed', 'processing', 'delivered', 'cancelled') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  )
+`);
+
+
+
     console.log("✅ Tables created successfully (if not exist).");
 
     // // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM orders");
+    const [rows, fields] = await connection.query("SELECT * FROM regularmenuorder");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
