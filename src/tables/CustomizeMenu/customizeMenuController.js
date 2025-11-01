@@ -71,6 +71,32 @@ const getMenuItems = async (req, res) => {
   }
 };
 
+// Get customize menus by user ID
+const getMenuItemsByUserId = async (req, res) => {
+  try {
+    const connection = await connectDB();
+    const user_id = req.params.user_id;
+
+    if (!user_id) {
+      return res.status(400).json({ msg: "User ID is required" });
+    }
+
+    const [rows] = await connection.query(
+      "SELECT * FROM customize_menu WHERE user_id = ? ORDER BY created_at DESC",
+      [user_id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ msg: "No menus found for this user" });
+    }
+
+    res.json(rows);
+  } catch (error) {
+    console.error("❌ Error fetching menus by user ID:", error);
+    res.status(500).json({ msg: "Server error", error: error.message });
+  }
+};
+
 // Update a menu
 const updateMenuItem = async (req, res) => {
   try {
@@ -124,6 +150,7 @@ const deleteMenuItem = async (req, res) => {
 module.exports = {
   addMenuItem,
   getMenuItems,
+  getMenuItemsByUserId,
   updateMenuItem,
   deleteMenuItem,
 };

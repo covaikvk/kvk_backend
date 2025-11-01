@@ -7,6 +7,7 @@ const {
   addMenuItem,
   getMenuItems,
   updateMenuItem,
+  getMenuItemsByUserId,
   deleteMenuItem,
 } = require("./customizeMenuController");
 
@@ -18,16 +19,20 @@ router.post("/", verifyToken, addMenuItem);
 router.put("/:id", verifyToken, updateMenuItem);
 router.delete("/:id", verifyToken, deleteMenuItem);
 
+
+// 🔒 GET MENUS BY USER ID — Token required
+router.get("/user/:user_id", verifyToken, getMenuItemsByUserId);
+
 // 🔒 GET SINGLE MENU (still protected)
 router.get("/:id", verifyToken, async (req, res) => {
   try {
     const connection = await connectDB();
-    const user_id = req.user.id;
+    const user_id = req.params.id;
     const menu_id = req.params.id;
 
     const [rows] = await connection.query(
-      "SELECT * FROM customize_menu WHERE id = ? AND user_id = ?",
-      [menu_id, user_id]
+      "SELECT * FROM customize_menu WHERE  user_id = ?",
+      [ user_id]
     );
 
     if (rows.length === 0)
