@@ -18,13 +18,19 @@ const addRegularMenuOrder = async (req, res) => {
     payment_status,
     order_status,
     numberOfPerson,
-    numberOfWeeks,
-    plan_price,
-    total_amount
+    numberOfWeeks
   } = req.body;
 
   try {
     const connection = await connectDB();
+
+    // ✅ Plan price logic
+    let plan_price = 0;
+    if (regularmenuname === "Weekly Veg Plan") plan_price = 1500;
+    if (regularmenuname === "Weekly Non Veg Plan") plan_price = 2000;
+
+    // ✅ Calculate total = plan * weeks * persons
+    const total_amount = plan_price * (numberOfWeeks || 1) * (numberOfPerson || 1);
 
     const [result] = await connection.query(
       `INSERT INTO regularmenuorder 
@@ -50,16 +56,18 @@ const addRegularMenuOrder = async (req, res) => {
         regularmenuname,
         payment_status || "pending",
         order_status || "pending",
-        numberOfPerson || null,
-        numberOfWeeks || null,
-        plan_price || null,
-        total_amount || null
+        numberOfPerson || 1,
+        numberOfWeeks || 1,
+        plan_price,
+        total_amount
       ]
     );
 
     res.status(201).json({
       message: "✅ Regular menu order created successfully",
-      id: result.insertId
+      id: result.insertId,
+      plan_price,
+      total_amount
     });
   } catch (error) {
     console.error("❌ Error creating regular menu order:", error.message);
