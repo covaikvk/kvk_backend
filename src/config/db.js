@@ -263,6 +263,10 @@ await connection.query(`
   )
 `);
 
+await connection.query(`
+  ALTER TABLE customize_menu
+  ADD COLUMN number_of_weeks INT AFTER number_of_persons
+`);
 
 
 // ✅ Create regularmenuorder table (with confirmed status)
@@ -290,16 +294,12 @@ await connection.query(`
   )
 `);
 
-// await connection.query(`
-//   ALTER TABLE regularmenuorder
-//   ADD COLUMN numberOfPerson INT AFTER landmark,
-//   ADD COLUMN numberOfWeeks INT AFTER numberOfPerson
-// `);
+
 
     console.log("✅ Tables created successfully (if not exist).");
 
     // // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM regularmenuorder");
+    const [rows, fields] = await connection.query("SELECT * FROM customize_menu");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));

@@ -3,14 +3,14 @@ const connectDB = require("../../config/db");
 // Add Customize Menu
 const addMenuItem = async (req, res) => {
   try {
-
     const connection = await connectDB();
     const user_id = req.user?.id || 18; // for testing without token
 
     const {
       sunday, monday, tuesday, wednesday, thursday, friday, saturday,
       name, phone_number, whatsapp_number, address_1, address_2,
-      pincode, city, state, landmark, number_of_persons, total, gst, grand_total
+      pincode, city, state, landmark, number_of_persons, number_of_weeks,
+      total, gst, grand_total
     } = req.body;
 
     if (!name) return res.status(400).json({ msg: "Name is required" });
@@ -19,9 +19,9 @@ const addMenuItem = async (req, res) => {
       INSERT INTO customize_menu (
         user_id, sunday, monday, tuesday, wednesday, thursday, friday, saturday,
         name, phone_number, whatsapp_number, address_1, address_2, pincode, city,
-        state, landmark, number_of_persons, total, gst, grand_total
+        state, landmark, number_of_persons, number_of_weeks, total, gst, grand_total
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const values = [
@@ -43,6 +43,7 @@ const addMenuItem = async (req, res) => {
       state,
       landmark,
       number_of_persons,
+      number_of_weeks,
       total,
       gst,
       grand_total
@@ -56,17 +57,13 @@ const addMenuItem = async (req, res) => {
   }
 };
 
-
 // Get all customize menus (public)
 const getMenuItems = async (req, res) => {
   try {
     const connection = await connectDB();
-
-    // 🔓 Fetch all records (no user token needed)
     const [rows] = await connection.query(
       "SELECT * FROM customize_menu ORDER BY created_at DESC"
     );
-
     res.json(rows);
   } catch (error) {
     console.error(error);
