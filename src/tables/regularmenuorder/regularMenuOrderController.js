@@ -24,30 +24,39 @@ const addRegularMenuOrder = async (req, res) => {
   try {
     const connection = await connectDB();
 
-    const [result] = await connection.query(`
-      INSERT INTO regularmenuorder 
-      (user_id, name, phone_number, alternate_phone_number, pincode, state, city, address_1, address_2, landmark, type_of_address, regularmenuname, payment_status, order_status, numberOfPerson, numberOfWeeks)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-      user_id,
-      name,
-      phone_number,
-      alternate_phone_number,
-      pincode,
-      state,
-      city,
-      address_1,
-      address_2,
-      landmark,
-      type_of_address,
-      regularmenuname,
-      payment_status || 'pending',
-      order_status || 'pending',
-      numberOfPerson || null,
-      numberOfWeeks || null
-    ]);
+    const [result] = await connection.query(
+      `INSERT INTO regularmenuorder 
+      (
+        user_id, name, phone_number, alternate_phone_number, pincode, state, city, 
+        address_1, address_2, landmark, type_of_address, regularmenuname, 
+        payment_status, order_status, numberOfPerson, numberOfWeeks
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      [
+        user_id,
+        name,
+        phone_number,
+        alternate_phone_number,
+        pincode,
+        state,
+        city,
+        address_1,
+        address_2,
+        landmark,
+        type_of_address,
+        regularmenuname,
+        payment_status || "pending",
+        order_status || "pending",
+        numberOfPerson || null,
+        numberOfWeeks || null
+      ]
+    );
 
-    res.status(201).json({ message: '✅ Regular menu order created successfully', id: result.insertId });
+    res.status(201).json({
+      message: "✅ Regular menu order created successfully",
+      id: result.insertId
+    });
   } catch (error) {
     console.error("❌ Error creating regular menu order:", error.message);
     res.status(500).json({ error: error.message });
@@ -58,7 +67,9 @@ const addRegularMenuOrder = async (req, res) => {
 const getAllRegularMenuOrders = async (req, res) => {
   try {
     const connection = await connectDB();
-    const [orders] = await connection.query("SELECT * FROM regularmenuorder ORDER BY id DESC");
+    const [orders] = await connection.query(
+      "SELECT * FROM regularmenuorder ORDER BY id DESC"
+    );
     res.status(200).json(orders);
   } catch (error) {
     console.error("❌ Error fetching orders:", error.message);
@@ -72,10 +83,13 @@ const getRegularMenuOrderById = async (req, res) => {
 
   try {
     const connection = await connectDB();
-    const [order] = await connection.query("SELECT * FROM regularmenuorder WHERE id = ?", [id]);
+    const [order] = await connection.query(
+      "SELECT * FROM regularmenuorder WHERE id = ?", 
+      [id]
+    );
 
     if (order.length === 0) {
-      return res.status(404).json({ message: 'Regular menu order not found' });
+      return res.status(404).json({ message: "Regular menu order not found" });
     }
 
     res.status(200).json(order[0]);
@@ -85,9 +99,10 @@ const getRegularMenuOrderById = async (req, res) => {
   }
 };
 
-// 🟩 Update Regular Menu Order
+// 🟦 Update Regular Menu Order
 const updateRegularMenuOrder = async (req, res) => {
   const { id } = req.params;
+
   const {
     name,
     phone_number,
@@ -109,36 +124,38 @@ const updateRegularMenuOrder = async (req, res) => {
   try {
     const connection = await connectDB();
 
-    const [result] = await connection.query(`
-      UPDATE regularmenuorder
+    const [result] = await connection.query(
+      `UPDATE regularmenuorder
       SET name = ?, phone_number = ?, alternate_phone_number = ?, pincode = ?, state = ?, city = ?, 
           address_1 = ?, address_2 = ?, landmark = ?, type_of_address = ?, regularmenuname = ?, 
           payment_status = ?, order_status = ?, numberOfPerson = ?, numberOfWeeks = ?
       WHERE id = ?
-    `, [
-      name,
-      phone_number,
-      alternate_phone_number,
-      pincode,
-      state,
-      city,
-      address_1,
-      address_2,
-      landmark,
-      type_of_address,
-      regularmenuname,
-      payment_status,
-      order_status,
-      numberOfPerson || null,
-      numberOfWeeks || null,
-      id
-    ]);
+      `,
+      [
+        name,
+        phone_number,
+        alternate_phone_number,
+        pincode,
+        state,
+        city,
+        address_1,
+        address_2,
+        landmark,
+        type_of_address,
+        regularmenuname,
+        payment_status,
+        order_status,
+        numberOfPerson || null,
+        numberOfWeeks || null,
+        id
+      ]
+    );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Regular menu order not found' });
+      return res.status(404).json({ message: "Regular menu order not found" });
     }
 
-    res.status(200).json({ message: '✅ Regular menu order updated successfully' });
+    res.status(200).json({ message: "✅ Regular menu order updated successfully" });
   } catch (error) {
     console.error("❌ Error updating regular menu order:", error.message);
     res.status(500).json({ error: error.message });
@@ -151,13 +168,16 @@ const deleteRegularMenuOrder = async (req, res) => {
 
   try {
     const connection = await connectDB();
-    const [result] = await connection.query("DELETE FROM regularmenuorder WHERE id = ?", [id]);
+    const [result] = await connection.query(
+      "DELETE FROM regularmenuorder WHERE id = ?", 
+      [id]
+    );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Regular menu order not found' });
+      return res.status(404).json({ message: "Regular menu order not found" });
     }
 
-    res.status(200).json({ message: '🗑️ Regular menu order deleted successfully' });
+    res.status(200).json({ message: "🗑️ Regular menu order deleted successfully" });
   } catch (error) {
     console.error("❌ Error deleting regular menu order:", error.message);
     res.status(500).json({ error: error.message });
