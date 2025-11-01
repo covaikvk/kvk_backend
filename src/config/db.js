@@ -287,6 +287,8 @@ await connection.query(`
     numberOfPerson INT,
     type_of_address ENUM('Home', 'Work', 'Other') DEFAULT 'Home',
     regularmenuname VARCHAR(255),
+    total_amount DECIMAL(10,2),
+    plan_price DECIMAL(10,2),
     payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
     order_status ENUM('pending', 'confirmed', 'processing', 'delivered', 'cancelled') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -295,11 +297,17 @@ await connection.query(`
 `);
 
 
+// await connection.query(`
+//   ALTER TABLE regularmenuorder
+//   ADD COLUMN plan_price DECIMAL(10,2) AFTER regularmenuname,
+//   ADD COLUMN total_amount DECIMAL(10,2) AFTER plan_price
+// `);
+
 
     console.log("✅ Tables created successfully (if not exist).");
 
     // // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM customize_menu");
+    const [rows, fields] = await connection.query("SELECT * FROM regularmenuorder");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));

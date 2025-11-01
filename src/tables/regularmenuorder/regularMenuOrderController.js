@@ -1,4 +1,4 @@
-const connectDB = require('../../config/db');
+ const connectDB = require('../../config/db');
 
 // 🟩 Add a new Regular Menu Order
 const addRegularMenuOrder = async (req, res) => {
@@ -18,7 +18,9 @@ const addRegularMenuOrder = async (req, res) => {
     payment_status,
     order_status,
     numberOfPerson,
-    numberOfWeeks
+    numberOfWeeks,
+    plan_price,
+    total_amount
   } = req.body;
 
   try {
@@ -29,9 +31,9 @@ const addRegularMenuOrder = async (req, res) => {
       (
         user_id, name, phone_number, alternate_phone_number, pincode, state, city, 
         address_1, address_2, landmark, type_of_address, regularmenuname, 
-        payment_status, order_status, numberOfPerson, numberOfWeeks
+        payment_status, order_status, numberOfPerson, numberOfWeeks, plan_price, total_amount
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         user_id,
@@ -49,7 +51,9 @@ const addRegularMenuOrder = async (req, res) => {
         payment_status || "pending",
         order_status || "pending",
         numberOfPerson || null,
-        numberOfWeeks || null
+        numberOfWeeks || null,
+        plan_price || null,
+        total_amount || null
       ]
     );
 
@@ -118,7 +122,9 @@ const updateRegularMenuOrder = async (req, res) => {
     payment_status,
     order_status,
     numberOfPerson,
-    numberOfWeeks
+    numberOfWeeks,
+    plan_price,
+    total_amount
   } = req.body;
 
   try {
@@ -128,7 +134,8 @@ const updateRegularMenuOrder = async (req, res) => {
       `UPDATE regularmenuorder
       SET name = ?, phone_number = ?, alternate_phone_number = ?, pincode = ?, state = ?, city = ?, 
           address_1 = ?, address_2 = ?, landmark = ?, type_of_address = ?, regularmenuname = ?, 
-          payment_status = ?, order_status = ?, numberOfPerson = ?, numberOfWeeks = ?
+          payment_status = ?, order_status = ?, numberOfPerson = ?, numberOfWeeks = ?, 
+          plan_price = ?, total_amount = ?
       WHERE id = ?
       `,
       [
@@ -147,6 +154,8 @@ const updateRegularMenuOrder = async (req, res) => {
         order_status,
         numberOfPerson || null,
         numberOfWeeks || null,
+        plan_price || null,
+        total_amount || null,
         id
       ]
     );
