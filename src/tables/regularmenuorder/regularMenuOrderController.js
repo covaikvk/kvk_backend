@@ -16,7 +16,9 @@ const addRegularMenuOrder = async (req, res) => {
     type_of_address,
     regularmenuname,
     payment_status,
-    order_status
+    order_status,
+    numberOfPerson,
+    numberOfWeeks
   } = req.body;
 
   try {
@@ -24,8 +26,8 @@ const addRegularMenuOrder = async (req, res) => {
 
     const [result] = await connection.query(`
       INSERT INTO regularmenuorder 
-      (user_id, name, phone_number, alternate_phone_number, pincode, state, city, address_1, address_2, landmark, type_of_address, regularmenuname, payment_status, order_status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (user_id, name, phone_number, alternate_phone_number, pincode, state, city, address_1, address_2, landmark, type_of_address, regularmenuname, payment_status, order_status, numberOfPerson, numberOfWeeks)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       user_id,
       name,
@@ -40,7 +42,9 @@ const addRegularMenuOrder = async (req, res) => {
       type_of_address,
       regularmenuname,
       payment_status || 'pending',
-      order_status || 'pending'
+      order_status || 'pending',
+      numberOfPerson || null,
+      numberOfWeeks || null
     ]);
 
     res.status(201).json({ message: '✅ Regular menu order created successfully', id: result.insertId });
@@ -50,7 +54,7 @@ const addRegularMenuOrder = async (req, res) => {
   }
 };
 
-// 🟨 Get all Regular Menu Orders
+// 🟦 Get All Regular Menu Orders
 const getAllRegularMenuOrders = async (req, res) => {
   try {
     const connection = await connectDB();
@@ -62,7 +66,7 @@ const getAllRegularMenuOrders = async (req, res) => {
   }
 };
 
-// 🟦 Get Regular Menu Order by ID
+// 🟦 Get Order by ID
 const getRegularMenuOrderById = async (req, res) => {
   const { id } = req.params;
 
@@ -97,7 +101,9 @@ const updateRegularMenuOrder = async (req, res) => {
     type_of_address,
     regularmenuname,
     payment_status,
-    order_status
+    order_status,
+    numberOfPerson,
+    numberOfWeeks
   } = req.body;
 
   try {
@@ -107,7 +113,7 @@ const updateRegularMenuOrder = async (req, res) => {
       UPDATE regularmenuorder
       SET name = ?, phone_number = ?, alternate_phone_number = ?, pincode = ?, state = ?, city = ?, 
           address_1 = ?, address_2 = ?, landmark = ?, type_of_address = ?, regularmenuname = ?, 
-          payment_status = ?, order_status = ?
+          payment_status = ?, order_status = ?, numberOfPerson = ?, numberOfWeeks = ?
       WHERE id = ?
     `, [
       name,
@@ -123,6 +129,8 @@ const updateRegularMenuOrder = async (req, res) => {
       regularmenuname,
       payment_status,
       order_status,
+      numberOfPerson || null,
+      numberOfWeeks || null,
       id
     ]);
 

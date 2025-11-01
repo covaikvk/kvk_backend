@@ -279,6 +279,8 @@ await connection.query(`
     address_1 VARCHAR(255) NOT NULL,
     address_2 VARCHAR(255),
     landmark VARCHAR(255),
+    numberOfWeeks INT,
+    numberOfPerson INT,
     type_of_address ENUM('Home', 'Work', 'Other') DEFAULT 'Home',
     regularmenuname VARCHAR(255),
     payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
@@ -288,7 +290,11 @@ await connection.query(`
   )
 `);
 
-
+// await connection.query(`
+//   ALTER TABLE regularmenuorder
+//   ADD COLUMN numberOfPerson INT AFTER landmark,
+//   ADD COLUMN numberOfWeeks INT AFTER numberOfPerson
+// `);
 
     console.log("✅ Tables created successfully (if not exist).");
 
