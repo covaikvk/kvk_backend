@@ -201,10 +201,33 @@ const deleteRegularMenuOrder = async (req, res) => {
   }
 };
 
+// 🟩 Get Regular Menu Orders by User ID
+const getRegularMenuOrdersByUserId = async (req, res) => {
+  const { user_id } = req.params; // ✅ we will send /user/:user_id in the route
+
+  try {
+    const connection = await connectDB();
+    const [orders] = await connection.query(
+      "SELECT * FROM regularmenuorder WHERE user_id = ? ORDER BY id DESC",
+      [user_id]
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "No regular menu orders found for this user" });
+    }
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("❌ Error fetching regular menu orders by user:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   addRegularMenuOrder,
   getAllRegularMenuOrders,
   getRegularMenuOrderById,
+  getRegularMenuOrdersByUserId,
   updateRegularMenuOrder,
   deleteRegularMenuOrder
 };

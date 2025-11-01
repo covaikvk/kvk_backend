@@ -91,6 +91,7 @@ exports.getAllOrders = async (req, res) => {
 exports.getOrdersByUser = async (req, res) => {
   try {
     const user_id = req.user.id;
+    const { id } = req.params;
     const connection = await connectDB();
 
     const [rows] = await connection.query(
