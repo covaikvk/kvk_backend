@@ -263,10 +263,10 @@ await connection.query(`
   )
 `);
 
-await connection.query(`
-  ALTER TABLE customize_menu
-  ADD COLUMN number_of_weeks INT AFTER number_of_persons
-`);
+// await connection.query(`
+//   ALTER TABLE customize_menu
+//   ADD COLUMN number_of_weeks INT AFTER number_of_persons
+// `);
 
 
 // ✅ Create regularmenuorder table (with confirmed status)
