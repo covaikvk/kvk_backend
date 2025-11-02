@@ -5,7 +5,7 @@ const addRegularMenuOrder = async (req, res) => {
   try {
     const connection = await connectDB();
 
-    // 🧾 Log the request body for debugging
+    // 🧾 Log incoming request
     console.log("📦 Incoming Order Request:", req.body);
 
     const {
@@ -23,53 +23,56 @@ const addRegularMenuOrder = async (req, res) => {
       regularmenuname,
       payment_status,
       order_status,
-      plan_price,
-      total_amount,
+      plan_price: bodyPlanPrice,
+      total_amount: bodyTotal,
       numberOfPerson,
       numberOfWeeks,
       numPersons,
       numWeeks,
     } = req.body;
 
-    // ✅ Normalize persons & weeks (frontend might send either)
+    // ✅ Normalize persons/weeks
     const persons = Number(numberOfPerson || numPersons || 1);
     const weeks = Number(numberOfWeeks || numWeeks || 1);
 
-    // ✅ Determine plan price (preserve frontend value if sent)
-    let finalPlanPrice = Number(plan_price);
-    if (!finalPlanPrice || isNaN(finalPlanPrice)) {
+    // ✅ Respect frontend values FIRST
+    let plan_price = Number(bodyPlanPrice);
+    let total_amount = Number(bodyTotal);
+
+    // 🟨 If frontend didn’t send valid numbers, fallback to defaults
+    if (!plan_price || isNaN(plan_price)) {
       const planName = (regularmenuname || "").toLowerCase();
       if (planName.includes("veg") && !planName.includes("non")) {
-        finalPlanPrice = 1500;
+        plan_price = 1500;
       } else if (planName.includes("non veg") || planName.includes("non-veg")) {
-        finalPlanPrice = 2000;
+        plan_price = 2000;
       } else {
-        finalPlanPrice = 1000; // fallback base price
+        plan_price = 1000; // default fallback
       }
     }
 
-    // ✅ Calculate total (preserve frontend total if provided)
-    const finalTotal =
-      Number(total_amount) && !isNaN(total_amount)
-        ? Number(total_amount)
-        : finalPlanPrice * persons * weeks;
+    // ✅ Only calculate total if frontend didn’t send
+    if (!total_amount || isNaN(total_amount)) {
+      total_amount = plan_price * persons * weeks;
+    }
 
-    // 🧾 Debug confirmation
+    // 🧾 Debug check
     console.log("🧾 Final Computed Order:", {
       regularmenuname,
       persons,
       weeks,
-      plan_price: finalPlanPrice,
-      total_amount: finalTotal,
+      plan_price,
+      total_amount,
     });
 
     // ✅ Insert into DB
     const [result] = await connection.query(
       `INSERT INTO regularmenuorder 
       (
-        user_id, name, phone_number, alternate_phone_number, pincode, state, city, 
-        address_1, address_2, landmark, type_of_address, regularmenuname, 
-        payment_status, order_status, numberOfPerson, numberOfWeeks, plan_price, total_amount
+        user_id, name, phone_number, alternate_phone_number, pincode, state, city,
+        address_1, address_2, landmark, type_of_address, regularmenuname,
+        payment_status, order_status, numberOfPerson, numberOfWeeks,
+        plan_price, total_amount
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
@@ -90,16 +93,16 @@ const addRegularMenuOrder = async (req, res) => {
         order_status || "pending",
         persons,
         weeks,
-        finalPlanPrice,
-        finalTotal,
+        plan_price,
+        total_amount,
       ]
     );
 
     res.status(201).json({
       message: "✅ Regular menu order created successfully",
       id: result.insertId,
-      plan_price: finalPlanPrice,
-      total_amount: finalTotal,
+      plan_price,
+      total_amount,
     });
   } catch (error) {
     console.error("❌ Error creating regular menu order:", error.message);
