@@ -31,15 +31,19 @@ const addRegularMenuOrder = async (req, res) => {
       numWeeks,
     } = req.body;
 
-    // ✅ Normalize field names
+    // ✅ Normalize persons & weeks (frontend might send either)
     const persons = Number(numberOfPerson || numPersons || 1);
     const weeks = Number(numberOfWeeks || numWeeks || 1);
 
-    // ✅ Determine plan price (use provided or fallback)
-    let plan_price = Number(bodyPlanPrice || 0);
+    // ✅ Determine plan price (case-insensitive fallback)
+    let plan_price = Number(bodyPlanPrice) || 0;
     if (!plan_price) {
-      if (regularmenuname === "Weekly Veg Plan") plan_price = 1500;
-      else if (regularmenuname === "Weekly Non Veg Plan") plan_price = 2000;
+      const planName = (regularmenuname || "").toLowerCase();
+      if (planName.includes("veg") && !planName.includes("non")) {
+        plan_price = 1500;
+      } else if (planName.includes("non veg") || planName.includes("non-veg")) {
+        plan_price = 2000;
+      }
     }
 
     // ✅ Calculate total amount
@@ -112,7 +116,7 @@ const getAllRegularMenuOrders = async (req, res) => {
   }
 };
 
-// 🟦 Get Order by ID
+// 🟦 Get Regular Menu Order by ID
 const getRegularMenuOrderById = async (req, res) => {
   const { id } = req.params;
 
@@ -134,7 +138,7 @@ const getRegularMenuOrderById = async (req, res) => {
   }
 };
 
-// 🟦 Update Regular Menu Order
+// 🟨 Update Regular Menu Order
 const updateRegularMenuOrder = async (req, res) => {
   const { id } = req.params;
 
