@@ -1,37 +1,60 @@
- const connectDB = require('../../config/db');
+const connectDB = require("../../config/db");
 
 // 🟩 Add a new Regular Menu Order
 const addRegularMenuOrder = async (req, res) => {
-  const {
-    user_id,
-    name,
-    phone_number,
-    alternate_phone_number,
-    pincode,
-    state,
-    city,
-    address_1,
-    address_2,
-    landmark,
-    type_of_address,
-    regularmenuname,
-    payment_status,
-    order_status,
-    numberOfPerson,
-    numberOfWeeks
-  } = req.body;
-
   try {
     const connection = await connectDB();
 
-    // ✅ Plan price logic
-    let plan_price = 0;
-    if (regularmenuname === "Weekly Veg Plan") plan_price = 1500;
-    if (regularmenuname === "Weekly Non Veg Plan") plan_price = 2000;
+    // 🧾 Log the request body for debugging
+    console.log("📦 Incoming Order Request:", req.body);
 
-    // ✅ Calculate total = plan * weeks * persons
-    const total_amount = plan_price * (numberOfWeeks || 1) * (numberOfPerson || 1);
+    const {
+      user_id,
+      name,
+      phone_number,
+      alternate_phone_number,
+      pincode,
+      state,
+      city,
+      address_1,
+      address_2,
+      landmark,
+      type_of_address,
+      regularmenuname,
+      payment_status,
+      order_status,
+      plan_price: bodyPlanPrice,
+      total_amount: bodyTotal,
+      numberOfPerson,
+      numberOfWeeks,
+      numPersons,
+      numWeeks,
+    } = req.body;
 
+    // ✅ Normalize field names
+    const persons = Number(numberOfPerson || numPersons || 1);
+    const weeks = Number(numberOfWeeks || numWeeks || 1);
+
+    // ✅ Determine plan price (use provided or fallback)
+    let plan_price = Number(bodyPlanPrice || 0);
+    if (!plan_price) {
+      if (regularmenuname === "Weekly Veg Plan") plan_price = 1500;
+      else if (regularmenuname === "Weekly Non Veg Plan") plan_price = 2000;
+    }
+
+    // ✅ Calculate total amount
+    const total_amount = Number(bodyTotal) || plan_price * persons * weeks;
+
+    // 🧾 Debug confirmation
+    console.log("🧾 Final Computed Order:", {
+      regularmenuname,
+      persons,
+      weeks,
+      plan_price,
+      total_amount,
+    });
+
+    // ✅ Insert into DB
     const [result] = await connection.query(
       `INSERT INTO regularmenuorder 
       (
@@ -56,10 +79,10 @@ const addRegularMenuOrder = async (req, res) => {
         regularmenuname,
         payment_status || "pending",
         order_status || "pending",
-        numberOfPerson || 1,
-        numberOfWeeks || 1,
+        persons,
+        weeks,
         plan_price,
-        total_amount
+        total_amount,
       ]
     );
 
@@ -67,7 +90,7 @@ const addRegularMenuOrder = async (req, res) => {
       message: "✅ Regular menu order created successfully",
       id: result.insertId,
       plan_price,
-      total_amount
+      total_amount,
     });
   } catch (error) {
     console.error("❌ Error creating regular menu order:", error.message);
@@ -96,7 +119,7 @@ const getRegularMenuOrderById = async (req, res) => {
   try {
     const connection = await connectDB();
     const [order] = await connection.query(
-      "SELECT * FROM regularmenuorder WHERE id = ?", 
+      "SELECT * FROM regularmenuorder WHERE id = ?",
       [id]
     );
 
@@ -132,7 +155,7 @@ const updateRegularMenuOrder = async (req, res) => {
     numberOfPerson,
     numberOfWeeks,
     plan_price,
-    total_amount
+    total_amount,
   } = req.body;
 
   try {
@@ -164,7 +187,7 @@ const updateRegularMenuOrder = async (req, res) => {
         numberOfWeeks || null,
         plan_price || null,
         total_amount || null,
-        id
+        id,
       ]
     );
 
@@ -172,7 +195,9 @@ const updateRegularMenuOrder = async (req, res) => {
       return res.status(404).json({ message: "Regular menu order not found" });
     }
 
-    res.status(200).json({ message: "✅ Regular menu order updated successfully" });
+    res
+      .status(200)
+      .json({ message: "✅ Regular menu order updated successfully" });
   } catch (error) {
     console.error("❌ Error updating regular menu order:", error.message);
     res.status(500).json({ error: error.message });
@@ -186,7 +211,7 @@ const deleteRegularMenuOrder = async (req, res) => {
   try {
     const connection = await connectDB();
     const [result] = await connection.query(
-      "DELETE FROM regularmenuorder WHERE id = ?", 
+      "DELETE FROM regularmenuorder WHERE id = ?",
       [id]
     );
 
@@ -194,7 +219,9 @@ const deleteRegularMenuOrder = async (req, res) => {
       return res.status(404).json({ message: "Regular menu order not found" });
     }
 
-    res.status(200).json({ message: "🗑️ Regular menu order deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "🗑️ Regular menu order deleted successfully" });
   } catch (error) {
     console.error("❌ Error deleting regular menu order:", error.message);
     res.status(500).json({ error: error.message });
@@ -203,7 +230,7 @@ const deleteRegularMenuOrder = async (req, res) => {
 
 // 🟩 Get Regular Menu Orders by User ID
 const getRegularMenuOrdersByUserId = async (req, res) => {
-  const { user_id } = req.params; // ✅ we will send /user/:user_id in the route
+  const { user_id } = req.params;
 
   try {
     const connection = await connectDB();
@@ -213,7 +240,9 @@ const getRegularMenuOrdersByUserId = async (req, res) => {
     );
 
     if (orders.length === 0) {
-      return res.status(404).json({ message: "No regular menu orders found for this user" });
+      return res
+        .status(404)
+        .json({ message: "No regular menu orders found for this user" });
     }
 
     res.status(200).json(orders);
@@ -229,5 +258,5 @@ module.exports = {
   getRegularMenuOrderById,
   getRegularMenuOrdersByUserId,
   updateRegularMenuOrder,
-  deleteRegularMenuOrder
+  deleteRegularMenuOrder,
 };
