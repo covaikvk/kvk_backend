@@ -10,7 +10,7 @@ const addMenuItem = async (req, res) => {
       sunday, monday, tuesday, wednesday, thursday, friday, saturday,
       name, phone_number, whatsapp_number, address_1, address_2,
       pincode, city, state, landmark, number_of_persons, number_of_weeks,
-      total, gst, grand_total
+      total, gst, grand_total, payment_status, order_status
     } = req.body;
 
     if (!name) return res.status(400).json({ msg: "Name is required" });
@@ -19,9 +19,10 @@ const addMenuItem = async (req, res) => {
       INSERT INTO customize_menu (
         user_id, sunday, monday, tuesday, wednesday, thursday, friday, saturday,
         name, phone_number, whatsapp_number, address_1, address_2, pincode, city,
-        state, landmark, number_of_persons, number_of_weeks, total, gst, grand_total
+        state, landmark, number_of_persons, number_of_weeks, total, gst, grand_total,
+        payment_status, order_status
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const values = [
@@ -46,18 +47,21 @@ const addMenuItem = async (req, res) => {
       number_of_weeks,
       total,
       gst,
-      grand_total
+      grand_total,
+      payment_status || "pending",
+      order_status || "pending"
     ];
 
     const [result] = await connection.query(query, values);
     res.status(201).json({ msg: "Customize menu added", id: result.insertId });
+
   } catch (error) {
     console.error("❌ Error adding menu:", error);
     res.status(500).json({ msg: "Server error", error: error.message });
   }
 };
 
-// Get all customize menus (public)
+// Get all customize menus
 const getMenuItems = async (req, res) => {
   try {
     const connection = await connectDB();
@@ -97,7 +101,7 @@ const getMenuItemsByUserId = async (req, res) => {
   }
 };
 
-// Update a menu
+// Update menu
 const updateMenuItem = async (req, res) => {
   try {
     const connection = await connectDB();
@@ -105,6 +109,12 @@ const updateMenuItem = async (req, res) => {
     const menu_id = req.params.id;
 
     const fields = req.body;
+
+    // Convert day objects to JSON if present
+    ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"].forEach(day => {
+      if (fields[day]) fields[day] = JSON.stringify(fields[day]);
+    });
+
     const values = Object.values(fields);
     const setQuery = Object.keys(fields).map(k => `${k} = ?`).join(", ");
 
@@ -124,7 +134,7 @@ const updateMenuItem = async (req, res) => {
   }
 };
 
-// Delete a menu
+// Delete menu
 const deleteMenuItem = async (req, res) => {
   try {
     const connection = await connectDB();

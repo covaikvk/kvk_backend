@@ -257,6 +257,8 @@ await connection.query(`
     landmark VARCHAR(255),
     number_of_persons INT,
     total DECIMAL(10,2),
+    payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
+    order_status ENUM('pending', 'confirmed', 'processing', 'delivered', 'cancelled') DEFAULT 'pending',
     gst DECIMAL(10,2),
     grand_total DECIMAL(10,2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -265,8 +267,10 @@ await connection.query(`
 
 // await connection.query(`
 //   ALTER TABLE customize_menu
-//   ADD COLUMN number_of_weeks INT AFTER number_of_persons
+//   ADD COLUMN payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
+//   ADD COLUMN order_status ENUM('pending', 'confirmed', 'processing', 'delivered', 'cancelled') DEFAULT 'pending'
 // `);
+
 
 
 // ✅ Create regularmenuorder table (with confirmed status)
@@ -307,7 +311,7 @@ await connection.query(`
     console.log("✅ Tables created successfully (if not exist).");
 
     // // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM regularmenuorder");
+    const [rows, fields] = await connection.query("SELECT * FROM customize_menu");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));
