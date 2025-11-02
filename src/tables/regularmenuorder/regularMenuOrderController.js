@@ -23,8 +23,8 @@ const addRegularMenuOrder = async (req, res) => {
       regularmenuname,
       payment_status,
       order_status,
-      plan_price: bodyPlanPrice,
-      total_amount: bodyTotal,
+      plan_price,
+      total_amount,
       numberOfPerson,
       numberOfWeeks,
       numPersons,
@@ -35,27 +35,32 @@ const addRegularMenuOrder = async (req, res) => {
     const persons = Number(numberOfPerson || numPersons || 1);
     const weeks = Number(numberOfWeeks || numWeeks || 1);
 
-    // ✅ Determine plan price (case-insensitive fallback)
-    let plan_price = Number(bodyPlanPrice) || 0;
-    if (!plan_price) {
+    // ✅ Determine plan price (preserve frontend value if sent)
+    let finalPlanPrice = Number(plan_price);
+    if (!finalPlanPrice || isNaN(finalPlanPrice)) {
       const planName = (regularmenuname || "").toLowerCase();
       if (planName.includes("veg") && !planName.includes("non")) {
-        plan_price = 1500;
+        finalPlanPrice = 1500;
       } else if (planName.includes("non veg") || planName.includes("non-veg")) {
-        plan_price = 2000;
+        finalPlanPrice = 2000;
+      } else {
+        finalPlanPrice = 1000; // fallback base price
       }
     }
 
-    // ✅ Calculate total amount
-    const total_amount = Number(bodyTotal) || plan_price * persons * weeks;
+    // ✅ Calculate total (preserve frontend total if provided)
+    const finalTotal =
+      Number(total_amount) && !isNaN(total_amount)
+        ? Number(total_amount)
+        : finalPlanPrice * persons * weeks;
 
     // 🧾 Debug confirmation
     console.log("🧾 Final Computed Order:", {
       regularmenuname,
       persons,
       weeks,
-      plan_price,
-      total_amount,
+      plan_price: finalPlanPrice,
+      total_amount: finalTotal,
     });
 
     // ✅ Insert into DB
@@ -85,16 +90,16 @@ const addRegularMenuOrder = async (req, res) => {
         order_status || "pending",
         persons,
         weeks,
-        plan_price,
-        total_amount,
+        finalPlanPrice,
+        finalTotal,
       ]
     );
 
     res.status(201).json({
       message: "✅ Regular menu order created successfully",
       id: result.insertId,
-      plan_price,
-      total_amount,
+      plan_price: finalPlanPrice,
+      total_amount: finalTotal,
     });
   } catch (error) {
     console.error("❌ Error creating regular menu order:", error.message);
