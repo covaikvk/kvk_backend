@@ -105,10 +105,10 @@ const connectDB = async () => {
       )
     `);
 
-//     await connection.query(`
-//   ALTER TABLE quotations
-//   ADD COLUMN date_of_function DATETIME AFTER numberOfPerson
-// `);
+    //     await connection.query(`
+    //   ALTER TABLE quotations
+    //   ADD COLUMN date_of_function DATETIME AFTER numberOfPerson
+    // `);
     // ✅ Create quotations table
     await connection.query(`
   CREATE TABLE IF NOT EXISTS quotations (
@@ -147,7 +147,7 @@ const connectDB = async () => {
     `);
 
     // ✅ Create orders table (updated with payment_status)
-await connection.query(`
+    await connection.query(`
   CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -170,8 +170,8 @@ await connection.query(`
 `);
 
 
-// ✅ Create videos table
-await connection.query(`
+    // ✅ Create videos table
+    await connection.query(`
   CREATE TABLE IF NOT EXISTS videos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     video_url VARCHAR(500) NOT NULL,
@@ -181,8 +181,8 @@ await connection.query(`
 `);
 
 
-// ✅ Create regularmenu table
-await connection.query(`
+    // ✅ Create regularmenu table
+    await connection.query(`
   CREATE TABLE IF NOT EXISTS regularmenu (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category VARCHAR(255) NOT NULL,
@@ -196,8 +196,8 @@ await connection.query(`
 
 
 
-// ✅ Create regulartabellist table
-await connection.query(`
+    // ✅ Create regulartabellist table
+    await connection.query(`
   CREATE TABLE IF NOT EXISTS regulartabellist (
     id INT AUTO_INCREMENT PRIMARY KEY,
     regularmenu_id INT NOT NULL,
@@ -218,8 +218,8 @@ await connection.query(`
 
 
 
-// ✅ Create favorites table (without item_id)
-await connection.query(`
+    // ✅ Create favorites table (without item_id)
+    await connection.query(`
   CREATE TABLE IF NOT EXISTS favorites (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -235,8 +235,8 @@ await connection.query(`
 `);
 
 
-// ✅ Create customize_menu table
-await connection.query(`
+    // ✅ Create customize_menu table
+    await connection.query(`
   CREATE TABLE IF NOT EXISTS customize_menu (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sunday JSON,
@@ -265,16 +265,16 @@ await connection.query(`
   )
 `);
 
-// await connection.query(`
-//   ALTER TABLE customize_menu
-//   ADD COLUMN payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
-//   ADD COLUMN order_status ENUM('pending', 'confirmed', 'processing', 'delivered', 'cancelled') DEFAULT 'pending'
-// `);
+    // await connection.query(`
+    //   ALTER TABLE customize_menu
+    //   ADD COLUMN payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
+    //   ADD COLUMN order_status ENUM('pending', 'confirmed', 'processing', 'delivered', 'cancelled') DEFAULT 'pending'
+    // `);
 
 
 
-// ✅ Create regularmenuorder table (with confirmed status)
-await connection.query(`
+    // ✅ Create regularmenuorder table (with confirmed status)
+    await connection.query(`
   CREATE TABLE IF NOT EXISTS regularmenuorder (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -300,18 +300,27 @@ await connection.query(`
   )
 `);
 
+    await connection.query(`
+  CREATE TABLE IF NOT EXISTS products(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )`)
 
-// await connection.query(`
-//   ALTER TABLE regularmenuorder
-//   ADD COLUMN plan_price DECIMAL(10,2) AFTER regularmenuname,
-//   ADD COLUMN total_amount DECIMAL(10,2) AFTER plan_price
-// `);
+    // await connection.query(`
+    //   ALTER TABLE regularmenuorder
+    //   ADD COLUMN plan_price DECIMAL(10,2) AFTER regularmenuname,
+    //   ADD COLUMN total_amount DECIMAL(10,2) AFTER plan_price
+    // `);
 
 
     console.log("✅ Tables created successfully (if not exist).");
 
     // // Optional: log address table details
-    const [rows, fields] = await connection.query("SELECT * FROM customize_menu");
+    const [rows, fields] = await connection.query("SELECT * FROM products");
     console.log("📋 Total number:", rows.length);
     console.log("📋 Columns:");
     fields.forEach((field) => console.log("-", field.name));

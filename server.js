@@ -29,7 +29,7 @@ const sendPushNotification = require("./src/utils/sendPush");
 
 // Test Notification Route
 app.get("/notification", async (req, res) => {
-  const testToken = "ExponentPushToken[ciLDMZICJMSaIyn6jw_Vlf]"; 
+  const testToken = "ExponentPushToken[ciLDMZICJMSaIyn6jw_Vlf]";
 
   await sendPushNotification(
     testToken,
@@ -47,7 +47,7 @@ app.use("/api/upload", require("./src/tables/upload/upload"));
 app.use("/api/videos", require("./src/tables/videos/videoRoutes"));
 app.use("/api/regularmenu", require("./src/tables/regularmenu/regularMenuRoutes"));
 app.use("/api/customizemenu", require("./src/tables/CustomizeMenu/customizeMenuRoutes"));
-app.use("/api/todayspecial",require("./src/tables/todayspecial/todayspecialRoutes"));
+app.use("/api/todayspecial", require("./src/tables/todayspecial/todayspecialRoutes"));
 app.use("/api/favourites", require("./src/tables/Favourites/favouritesRoutes"));
 app.use("/api/regularmenuorder", require("./src/tables/regularmenuorder/regularMenuOrderRoutes"));
 app.use("/api/menu", require("./src/tables/menu/menuRoutes"));
@@ -55,6 +55,7 @@ app.use("/api/auth", require("./src/tables/user/authRoutes"));
 app.use("/api/foods", require("./src/tables/Foods/foodsRoutes"));
 app.use("/api/orders", require("./src/tables/order/orderRoutes"));
 app.use("/api/quotations", require("./src/tables/quotations/quotationsRoutes"));
+app.use("/api/products", require("./src/tables/products/productsRoutes"));
 
 
 // Start server
