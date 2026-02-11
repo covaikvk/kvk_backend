@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const connectDB = require('../../config/db');
+
+
 
 const createProduct = async (req, res) => {
     try {
@@ -7,7 +10,9 @@ const createProduct = async (req, res) => {
         if (!name || !price) {
             return res.status(400).json({ error: 'All fields are required' });
         }
-        const [result] = await pool.query(
+        const connection = await connectDB();
+
+        const [result] = await connection.query(
             'INSERT INTO products (name, price, description, image_url) VALUES (?, ?, ?, ?)',
             [name, price, description, image_url]
         );
@@ -20,7 +25,8 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM products');
+        const connection = await connectDB();
+        const [rows] = await connection.query('SELECT * FROM products');
         res.status(200).json(rows);
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -35,7 +41,8 @@ const updateProduct = async (req, res) => {
         if (!name || !price) {
             return res.status(400).json({ error: 'All fields are required' });
         }
-        await pool.query(
+        const connection = await connectDB();
+        await connection.query(
             'UPDATE products SET name = ?, price = ?, description = ?, image_url = ? WHERE id = ?',
             [name, price, description, image_url, id]
         );
@@ -52,7 +59,8 @@ const deleteProduct = async (req, res) => {
         if (!id) {
             return res.status(400).json({ error: 'Product ID is required' });
         }
-        await pool.query('DELETE FROM products WHERE id = ?', [id]);
+        const connection = await connectDB();
+        await connection.query('DELETE FROM products WHERE id = ?', [id]);
         res.status(200).json({ message: 'Product deleted successfully' });
     } catch (error) {
         console.error('Error deleting product:', error);
